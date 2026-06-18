@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FWI Prediction</title>
+    <style>
+        .input-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        .input-container input, .input-container select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            background-color: #ffffff;
+            outline: none;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .input-container input.error-field, .input-container select.error-field {
+            border: 2px solid red !important;
+            background-color: #ffe6e6 !important;
+        }
+        .input-container .tooltip {
+            visibility: hidden;
+            width: 250px;
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; 
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        .input-container:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="login">
+        <h1>FWI Prediction</h1>
+
+        <form action="{{ url_for('predict_datapoint') }}" method="post">
+
+            <div class="input-container">
+                <input type="number" name="Temperature" placeholder="Temperature (°C)" min="0" max="60" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">Temperature: Acceptable range 0 to 60°C</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="RH" placeholder="Relative Humidity (%)" min="0" max="100" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">RH: Relative Humidity range 0% to 100%</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="Ws" placeholder="Wind Speed (km/h)" min="0" max="100" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">Ws: Wind Speed range 0 to 100 km/h</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="Rain" placeholder="Rain (mm)" min="0" max="500" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">Rain: Total rainfall range 0 to 500 mm</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="FFMC" placeholder="FFMC Index" min="0" max="101" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">FFMC: Fine Fuel Moisture Code range 0 to 101</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="DMC" placeholder="DMC Index" min="0" max="300" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">DMC: Duff Moisture Code range 0 to 300</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="ISI" placeholder="ISI Index" min="0" max="50" step="0.1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">ISI: Initial Spread Index range 0 to 50</span>
+            </div><br>
+
+            <div class="input-container">
+                <select name="Classes" required onblur="validateField(this)" onchange="validateField(this)">
+                    <option value="" disabled selected>Select Class</option>
+                    <option value="1">Fire</option>
+                    <option value="0">Not Fire</option>
+                </select>
+                <span class="tooltip">Classes: Select Fire (1) or Not Fire (0)</span>
+            </div><br>
+
+            <div class="input-container">
+                <input type="number" name="Region" placeholder="Region (0 or 1)" min="0" max="1" step="1" required onblur="validateField(this)" oninput="validateField(this)" />
+                <span class="tooltip">Region: Enter 0 for Region A or 1 for Region B</span>
+            </div><br>
+
+            <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+        </form>
+
+        {% if result is defined %}
+            <h2>THE FWI prediction is {{ result }}</h2>
+        {% endif %}
+    </div>
+    <script>
+        function validateField(inputElement) {
+            if (!inputElement.checkValidity() && inputElement.value !== "") {
+                inputElement.classList.add("error-field");} 
+            else
+                {inputElement.classList.remove("error-field");}
+            }
+    </script>
+</body>
+</html>
